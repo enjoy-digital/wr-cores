@@ -8,6 +8,7 @@
 --              Oskar Szakinnis <oskar.szakinnis@missinglinkelectronics.com>
 --              (based on work by Grzegorz Daniluk <grzegorz.daniluk@cern.ch>)
 -- Company    : Missing Link Electronics
+--              CERN (BE-CO-HT)
 -- Created    : 2023-08-01
 -- Standard   : VHDL'93
 -------------------------------------------------------------------------------
@@ -15,26 +16,9 @@
 -- needed to operate the core on the Xilinx ZC706 board.
 -- ZC706: https://www.xilinx.com/products/boards-and-kits/ek-z7-zc706-g.html
 -------------------------------------------------------------------------------
--- Copyright (c) 2023-2025 CERN, Missing Link Electronics
--------------------------------------------------------------------------------
--- GNU LESSER GENERAL PUBLIC LICENSE
---
--- This source file is free software; you can redistribute it   
--- and/or modify it under the terms of the GNU Lesser General   
--- Public License as published by the Free Software Foundation; 
--- either version 2.1 of the License, or (at your option) any   
--- later version.                                               
---
--- This source is distributed in the hope that it will be       
--- useful, but WITHOUT ANY WARRANTY; without even the implied   
--- warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR      
--- PURPOSE.  See the GNU Lesser General Public License for more 
--- details.                                                     
---
--- You should have received a copy of the GNU Lesser General    
--- Public License along with this source; if not, download it   
--- from http://www.gnu.org/licenses/lgpl-2.1.html
+-- Copyright (c) 2023-2025 Missing Link Electronics, CERN
 -- 
+-- CERN Open Hardware Licence Version 2 - Weakly Reciprocal
 -------------------------------------------------------------------------------
 
 library ieee;
