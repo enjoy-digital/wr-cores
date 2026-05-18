@@ -417,9 +417,6 @@ architecture struct of xwr_subsystem is
   signal onewire_wb_in : t_wishbone_slave_in;
   signal onewire_wb_out : t_wishbone_slave_out;
 
-  signal timing_wb_in : t_wishbone_slave_in;
-  signal timing_wb_out : t_wishbone_slave_out;
-
   signal diags_cpu_wb_in : t_wishbone_slave_in;
   signal diags_cpu_wb_out : t_wishbone_slave_out;
 
@@ -666,7 +663,6 @@ begin
   -- Timecode generator
   --------------------------------------
   gen_aux_timing: if f_aux_timing_enabled(g_aux_timing_config) generate
-    signal aux_timing_out : t_aux_timing_out;
   begin
 
     TIMECODE_GEN: entity work.wr_timecodes
@@ -691,7 +687,7 @@ begin
         pll_serdes_locked_i => aux_timing_serdes_locked_i,
 
         utc_o        => utc_o,
-        aux_timing_o => aux_timing_out
+        aux_timing_o => aux_timing_o
       );
   end generate gen_aux_timing;
 
@@ -1090,8 +1086,8 @@ begin
       vuart_o => vuart_cpu_wb_in,
       onewire_i => onewire_wb_out,
       onewire_o => onewire_wb_in,
-      timing_i => timing_wb_out,
-      timing_o => timing_wb_in,
+      timing_i => timecode_wb_out,
+      timing_o => timecode_wb_in,
       wdiag_i => diags_cpu_wb_out,
       wdiag_o => diags_cpu_wb_in,
       freqmon_i => freqmon_wb_out,
