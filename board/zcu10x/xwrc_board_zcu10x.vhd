@@ -34,6 +34,7 @@ use work.streamers_pkg.all;
 use work.wr_xilinx_pkg.all;
 use work.wr_board_pkg.all;
 use work.si570_wbgen2_pkg.all;
+use work.wr_timecode_pkg.all;
 
 library unisim;
 use unisim.vcomponents.all;
@@ -57,7 +58,8 @@ entity xwrc_board_zcu10x is
     g_dac_bits                  : integer              := 16;
     -- Both ZCU102 and ZCU106 are currently supported
     g_board_name                : string               := "X10x";
-    g_num_fmc_enable            : integer              := 2
+    g_num_fmc_enable            : integer              := 2;
+    g_aux_timing_config         : t_wr_timecode_config := c_WR_TIMECODE_NONE
     );
   port (
     ---------------------------------------------------------------------------
@@ -208,6 +210,9 @@ entity xwrc_board_zcu10x is
     pps_p_o     : out std_logic;
     pps_valid_o : out std_logic;
     pps_led_o   : out std_logic;
+    --
+    utc_o         : out t_utc_out;
+    aux_timing_o  : out t_aux_timing_out;
     -- Link ok indication
     link_ok_o   : out std_logic
     );
@@ -277,6 +282,12 @@ architecture struct of xwrc_board_zcu10x is
   -- aux wishbone
   signal aux_master_out : t_wishbone_master_out;
   signal aux_master_in : t_wishbone_master_in := cc_dummy_master_in;
+
+  -- Auxclock serdes word
+  signal aux_timing_serdes_locked : std_logic;
+  signal aux_timing_out : t_aux_timing_out;
+  signal serdes_out     : std_logic;
+  signal pll_arst            : std_logic := '0';
 
 begin  -- architecture struct
 
@@ -661,7 +672,8 @@ begin  -- architecture struct
       g_diag_ro_size              => g_diag_ro_size,
       g_diag_rw_size              => g_diag_rw_size,
       g_fabric_iface              => plain,
-      g_dac_bits                  => g_dac_bits)
+      g_dac_bits                  => g_dac_bits,
+      g_aux_timing_config         => g_aux_timing_config)
     port map (
       clk_sys_i            => wr_clk_main_62m5,
       clk_dmtd_i           => clk_pll_dmtd,
@@ -721,7 +733,10 @@ begin  -- architecture struct
       pps_p_o              => pps_p_o,
       pps_valid_o          => pps_valid_o,
       pps_led_o            => pps_led_o,
-      link_ok_o            => link_ok_o);
+      link_ok_o            => link_ok_o,
+      aux_timing_serdes_locked_i  => aux_timing_serdes_locked,
+      utc_o                => utc_o,
+      aux_timing_o         => aux_timing_out);
 
   cmp_board_crossbar : entity work.board_zcu10x_bus_wb
     port map(
@@ -809,5 +824,19 @@ begin  -- architecture struct
     );
 
   sfp_rate_select_o <= '1';
+  ------------------------------------------------------------------------------
+  cmp_serdes: entity work.xoserdes_8_to_1_ultrascale
+    port map
+    (
+      clk_i     => wr_clk_ref_125m,
+      rst_i     => pll_arst,
+      serdes_i  => aux_timing_out.serdes_in,
+      serdes_o  => serdes_out,
+      pll_serdes_locked_o => aux_timing_serdes_locked
+    );
+  aux_timing_o <= f_aux_timing_assign_serdes_out(aux_timing_out, serdes_out);
+
+  -- active high async reset for PLLs
+  pll_arst <= not areset_n_i;
 
 end architecture struct;
