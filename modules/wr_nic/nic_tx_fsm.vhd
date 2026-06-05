@@ -148,20 +148,12 @@ architecture behavioral of nic_tx_fsm is
   signal rtu_port_mask    : std_logic_vector(g_port_mask_bits-1 downto 0);
 
   signal tx_err : std_logic;
-  signal default_status_reg : t_wrf_status_reg;
 
   signal ack_count : unsigned(3 downto 0);
 	signal src_stb_int	:	std_logic;
   signal ackcnt_nrst : std_logic;
 
 begin  -- behavioral
-
-
-  default_status_reg.has_smac <= '1';
-  default_status_reg.has_crc <= '0';
-  default_status_reg.error <= '0';
-  default_status_reg.is_hp <= '0';
-  
   tx_err <= src_i.err or src_i.rty;
 
   buf_addr_o <= std_logic_vector(tx_buf_addr);
@@ -309,7 +301,12 @@ begin  -- behavioral
             ackcnt_nrst <= '1';
             src_o.adr  	<= c_WRF_STATUS;
             src_o.sel  	<= "11";
-            src_o.dat  	<= f_marshall_wrf_status(default_status_reg);
+            src_o.dat  	<= f_marshall_wrf_status(t_wrf_status_reg'(error => '0',
+                                                                   is_hp => '0',
+                                                                   has_crc => '0',
+                                                                   has_smac => not cur_tx_desc.smac_ovr,
+                                                                   tag_me => '0',
+                                                                   match_class => x"00"));
             
             if( src_i.stall = '0' and buf_grant_i = '0') then
               src_stb_int <= '1';

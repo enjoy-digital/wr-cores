@@ -37,6 +37,7 @@ package nic_descriptors_pkg is
     ts_id  : std_logic_vector(15 downto 0);  --  OOB frame id (for TX timestamping)
     pad_e  : std_logic;                 -- padding enable
     ts_e   : std_logic;                 -- timestamp enable
+    smac_ovr : std_logic;               -- when 1, source mac address is overriden by hw
     error  : std_logic;                 -- TX error indication
     ready  : std_logic;  -- Descriptor ready for transmission flag
     len    : std_logic_vector(c_nic_buf_size_log2-1 downto 0);  -- Length of the packet
@@ -95,7 +96,7 @@ package body NIC_descriptors_pkg is
   begin
 
     case regnum is
-      when 3      => tmp := desc.ts_id & x"000" & desc.pad_e & desc.ts_e & desc.error & desc.ready;
+      when 3      => tmp := desc.ts_id & x"00" & "000" & desc.smac_ovr & desc.pad_e & desc.ts_e & desc.error & desc.ready;
       when 0      => tmp := f_resize_slv(desc.len, 16) & f_resize_slv(desc.offset, 16);
       when 1      => tmp := desc.dpm;
       when others => null;
@@ -126,6 +127,7 @@ package body NIC_descriptors_pkg is
     case regnum is
       when 1 =>
         desc.ts_id := mem_input(31 downto 16);
+        desc.smac_ovr := mem_input(4);
         desc.pad_e := mem_input(3);
         desc.ts_e  := mem_input(2);
         desc.error := mem_input(1);
