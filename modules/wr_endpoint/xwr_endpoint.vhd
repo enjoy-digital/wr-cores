@@ -39,6 +39,7 @@ entity xwr_endpoint is
     g_tx_runt_padding       : boolean                        := false;
     g_pcs_16bit             : boolean                        := false;
     g_rx_buffer_size        : integer                        := 1024;
+    g_keep_crc              : boolean                        := false;
     g_with_rx_buffer        : boolean                        := true;
     g_with_flow_control     : boolean                        := true;
     g_with_timestamper      : boolean                        := true;
@@ -486,6 +487,7 @@ begin
       g_with_dpi_classifier => g_with_dpi_classifier,
       g_with_rtu            => g_with_rtu,
       g_with_rx_buffer      => g_with_rx_buffer,
+      g_keep_crc            => g_keep_crc,
       g_rx_buffer_size      => g_rx_buffer_size,
       g_use_new_crc         => g_use_new_rxcrc)
     port map (
