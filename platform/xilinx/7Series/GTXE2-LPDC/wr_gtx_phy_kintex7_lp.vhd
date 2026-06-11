@@ -228,20 +228,12 @@ architecture rtl of wr_gtx_phy_kintex7_lp is
     return rv;
   end function;
 
-
-  signal comma_target_pos : std_logic_vector(4 downto 0);
-  signal comma_current_pos : std_logic_vector(4 downto 0);
-  signal comma_pos_valid : std_logic;
-
   signal tx_out_clk_div2 : std_logic;
-  signal tx_out_clk_div1 : std_logic;
   signal gtx_rst_n_txdiv2 : std_logic;
 
   signal run_disparity_q0, run_disparity_q1 : std_logic;
   signal run_disparity_reg : std_logic;
 
-  signal tx_out_clk_div2_bufin : std_logic;
-  signal tx_out_clk_div1_bufin : std_logic;
   signal txusrpll_locked : std_logic;
 
 
@@ -281,7 +273,6 @@ architecture rtl of wr_gtx_phy_kintex7_lp is
   signal rx_pat_latch_p1_rx_62m5 : std_logic;
   signal rx_pat_value : std_logic_vector(239 downto 0);
 
-  signal ddmtd_mask_cnt_sreg_fedge : std_logic_vector(3 downto 0);
   signal ddmtd_mask_sync_62m5 : std_logic;
   signal ddmtd_mask_sync_250m, ddmtd_mask_sync_250m_d, ddmtd_mask_sync_250m_p, ddmtd_mask_sync_250m_p_fedge : std_logic;
 
@@ -749,7 +740,7 @@ begin  -- rtl
 
   gen_sim_bufg : if g_simulation /= 0 generate
 
-  clk_rx_62m5 <= clk_rx_62m5_bufin after 1ns;
+  clk_rx_62m5 <= clk_rx_62m5_bufin after 1 ns;
 
   end generate gen_sim_bufg;
 
