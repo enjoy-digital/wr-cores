@@ -248,7 +248,7 @@ begin
 
         if sysc_regs_o.gpsr_wr = '1' and sysc_regs_o.gpsr_spi_mosi = '1' then
           spi_mosi_o <= '1';
-        elsif sysc_regs_o.gpsr_wr = '1' and sysc_regs_o.gpcr_spi_mosi = '1' then
+        elsif sysc_regs_o.gpcr_wr = '1' and sysc_regs_o.gpcr_spi_mosi = '1' then
           spi_mosi_o <= '0';
         end if;
       end if;
