@@ -1,0 +1,33 @@
+###############################################################################
+## SPDX-FileCopyrightText: 2026 CERN (home.cern)
+##
+## SPDX-License-Identifier: LGPL-2.1-or-later, CERN-OHL-W-2.0+
+###############################################################################
+memory-map:
+  bus: axi4-lite-32
+  name: mpsoc_map
+  description: Memmap from mpsoc
+  children:
+  - submap:
+     name: wrpc
+     interface: wb-32-be
+     size: 4k
+     address: 0x0000
+     x-hdl:
+       busgroup: True
+  - reg:
+      name: ctrl
+      comment: control register
+      address: 0x1000
+      width: 32
+      access: rw
+      children:
+      - field:
+          name: led1
+          range: 0
+      - field:
+          name: led2
+          range: 1
+      - field:
+          name: gth_rst
+          range: 2
