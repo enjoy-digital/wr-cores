@@ -687,7 +687,7 @@ begin
           --  FB CLK should be way higher than system clock
           if hpll_cnt(5 downto 4) = "00" then
             hpll_toggle <= '0';
-          elsif mpll_cnt(5 downto 4) /= "11" then
+          elsif hpll_cnt(5 downto 4) /= "11" then
             hpll_toggle <= '1';
           end if;
           hpll_cnt <= hpll_cnt - 1;
