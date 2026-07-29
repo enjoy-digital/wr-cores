@@ -271,25 +271,6 @@ end entity xwrc_board_common;
 
 
 architecture struct of xwrc_board_common is
-
-    component eb_ethernet_slave is
-    generic(
-      g_sdb_address    : std_logic_vector(63 downto 0);
-      g_timeout_cycles : natural := 6250000; -- 100 ms at 62.5MHz
-      g_mtu            : natural := 1500);
-    port(
-      clk_i       : in  std_logic;
-      nRst_i      : in  std_logic;
-      snk_i       : in  t_wrf_sink_in;
-      snk_o       : out t_wrf_sink_out;
-      src_o       : out t_wrf_source_out;
-      src_i       : in  t_wrf_source_in;
-      cfg_slave_o : out t_wishbone_slave_out;
-      cfg_slave_i : in  t_wishbone_slave_in;
-      master_o    : out t_wishbone_master_out;
-      master_i    : in  t_wishbone_master_in);
-  end component;
-
   -----------------------------------------------------------------------------
   -- Signals
   -----------------------------------------------------------------------------
@@ -564,7 +545,9 @@ begin  -- architecture struct
 
     cmp_eb_ethernet_slave : eb_ethernet_slave
       generic map (
-        g_sdb_address => x"0000000000030000")
+        g_sdb_address    => x"0000000000030000",
+        g_timeout_cycles => 6250000, -- 100 ms at 62.5MHz
+        g_mtu            => 1500)
       port map (
         clk_i       => clk_sys_i,
         nRst_i      => aux_rst_n,

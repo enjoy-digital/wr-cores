@@ -374,4 +374,4 @@ NET "rst_n_i" TIG;
 NET "vme_sysreset_n_i" TIG;
 
 # Force PPS output to always be placed as IOB register
-INST "cmp_xwrc_board_svec/cmp_board_common/cmp_xwr_core/inst_uncore/PPS_GEN/pps_out_o" IOB = FORCE;
+INST "cmp_xwrc_board_svec/cmp_board_common/cmp_xwr_core/inst_subsystem/PPS_GEN/pps_out_o" IOB = FORCE;

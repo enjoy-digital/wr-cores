@@ -20,3 +20,7 @@ Makefile
 *.xml
 xgui/
 *.orig
+ip_cores/vme64x-core/
+ip_cores/gn4124-core/
+ip_cores/etherbone-core/
+

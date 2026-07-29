@@ -29,7 +29,6 @@ use work.endpoint_pkg.all;
 use work.streamers_pkg.all;
 use work.wr_xilinx_pkg.all;
 use work.wr_board_pkg.all;
-use work.wr_cute_pkg.all;
 
 library unisim;
 use unisim.vcomponents.all;
@@ -416,7 +415,7 @@ begin  -- architecture struct
       I  => clk_125m_pllref_p_i,
       IB => clk_125m_pllref_n_i);
 
-  cmp_xwrc_platform : xwrc_platform_xilinx
+  cmp_xwrc_platform : entity work.xwrc_platform_xilinx
     generic map (
       g_fpga_family               => "spartan6",
       g_with_external_clock_input => g_with_external_clock_input,
@@ -580,7 +579,7 @@ begin  -- architecture struct
   -- The WR PTP core with optional fabric interface attached
   -----------------------------------------------------------------------------
 
-  cmp_board_common : xwrc_board_common
+  cmp_board_common : entity work.xwrc_board_common
     generic map (
       g_simulation                => g_simulation,
       g_with_external_clock_input => g_with_external_clock_input,

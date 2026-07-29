@@ -36,7 +36,6 @@ library work;
 use work.gencores_pkg.all;
 use work.wishbone_pkg.all;
 use work.wr_board_pkg.all;
-use work.wr_cute_pkg.all;
 
 library unisim;
 use unisim.vcomponents.all;
@@ -191,7 +190,7 @@ architecture rtl of cute_wr_ref_top is
 
 begin
 
-  u_wr_core : xwrc_board_cute
+  u_wr_core : entity work.xwrc_board_cute
     generic map(
       g_dpram_initf      => g_dpram_initf,
       g_sfp0_enable      => g_sfp0_enable,

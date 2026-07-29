@@ -350,4 +350,4 @@ INST "*/U_SOFTPLL/gen_no_direct_tag.gen_output_dmtds*/clk_in" TNM = skew_limit;
 TIMESPEC TS_ = FROM "skew_limit" TO "FFS" 1 ns DATAPATHONLY;
 
 # Force PPS output to always be placed as IOB register
-INST "cmp_xwrc_board_spec/cmp_board_common/cmp_xwr_core/inst_uncore/PPS_GEN/pps_out_o" IOB = FORCE;
+INST "cmp_xwrc_board_spec/cmp_board_common/cmp_xwr_core/inst_subsystem/PPS_GEN/pps_out_o" IOB = FORCE;

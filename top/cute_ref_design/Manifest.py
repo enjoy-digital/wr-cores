@@ -17,7 +17,7 @@ modules = {
     ],
     "git" : [
         "git://gitlab.com/ohwr/project/general-cores.git",
-        "git://gitlab.com/ohwr/project/etherbone-core.git",
         "git://gitlab.com/ohwr/project/urv-core.git",
+        "https://gitlab.com/ohwr/project/gn4124-core.git@@4eb317d1c226c6fa06baa65d6835bb5d02c3f9a3",
     ],
 }
