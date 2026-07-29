@@ -146,7 +146,7 @@ begin
               state <= S_CMD_GAIN;
             when S_CMD_GAIN =>
               --  Set gain (1 on both channels)
-              buf <= "XX" & "010" & "XXX" & "XXXXXXXXXXXXXX" & "11";
+              buf <= "XX" & "000" & "010" & "XXXXXXXXXXXXXX" & "11";
               busy <= '1';
               state <= S_DONE;
             when S_DONE =>
