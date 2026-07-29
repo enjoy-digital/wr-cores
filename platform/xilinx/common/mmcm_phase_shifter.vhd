@@ -1,9 +1,13 @@
 -------------------------------------------------------------------------------
+-- SPDX-FileCopyrightText: 2023 Missing Link Electronics(missinglinkelectronics.com) - CERN (home.cern)
+--
+-- SPDX-License-Identifier: CERN-OHL-W-2.0+
+-------------------------------------------------------------------------------
 -- Title      : MMCM Dynamic Phase Shift DAC converter
 -- Project    : WR PTP Core
 -- URL        : http://www.ohwr.org/projects/wr-cores/wiki/Wrpc_core
 -------------------------------------------------------------------------------
--- File       : ps_gen.vhd
+-- File       : mmcm_phase_shifter.vhd
 -- Author(s)  : Frederik Pfautsch <frederik.pfautsch@missinglinkelectronics.com>
 -- Company    : Missing Link Electronics
 -- Created    : 2023-08-03
@@ -13,34 +17,13 @@
 -- Description: Initiates the dynamic phase shift of an MMCM regularly
 --              based on a n-bit unsigned input value.
 -------------------------------------------------------------------------------
--- Copyright (c) 2023 CERN
--------------------------------------------------------------------------------
--- GNU LESSER GENERAL PUBLIC LICENSE
---
--- This source file is free software; you can redistribute it   
--- and/or modify it under the terms of the GNU Lesser General   
--- Public License as published by the Free Software Foundation; 
--- either version 2.1 of the License, or (at your option) any   
--- later version.                                               
---
--- This source is distributed in the hope that it will be       
--- useful, but WITHOUT ANY WARRANTY; without even the implied   
--- warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR      
--- PURPOSE.  See the GNU Lesser General Public License for more 
--- details.                                                     
---
--- You should have received a copy of the GNU Lesser General    
--- Public License along with this source; if not, download it   
--- from http://www.gnu.org/licenses/lgpl-2.1.html
--- 
--------------------------------------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.math_real.all;
 
-entity ps_gen is
+entity mmcm_phase_shifter is
   generic (
     WIDTH : integer := 16;
     DIV : integer := 1;
@@ -57,9 +40,9 @@ entity ps_gen is
     psen : out std_logic;
     psincdec : out std_logic
   );
-end ps_gen;
+end mmcm_phase_shifter;
 
-architecture behavioral of ps_gen is
+architecture behavioral of mmcm_phase_shifter is
   --------------------------------------------------------------------------------
   -- constants / types / signals / attributes / functions
   --------------------------------------------------------------------------------

@@ -28,6 +28,5 @@ modules =  {
         "wr_flash",
         "wr_epx",
         "wr_locksweep",
-        "ps_gen",
     ]
 }

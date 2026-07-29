@@ -811,7 +811,7 @@ begin  -- architecture struct
 
     -- DAC to Dynamic Phase Shift converter for dmtd clock
     -- Scales down MMCM pulling range of ~297 ppm to ~+-114 ppm
-    cmp_dmtd_ps_gen : entity work.ps_gen
+    cmp_dmtd_mmcm_phase_shifter : entity work.mmcm_phase_shifter
       generic map(
         WIDTH => g_dac_bits,
         DIV   => 16,
@@ -828,7 +828,7 @@ begin  -- architecture struct
 
     -- DAC to Dynamic Phase Shift converter for main clock
     -- Scales down MMCM pulling range of ~297 ppm to ~+-114 ppm
-    cmp_main_ps_gen : entity work.ps_gen
+    cmp_main_mmcm_phase_shifter : entity work.mmcm_phase_shifter
       generic map(
         WIDTH => g_dac_bits,
         DIV   => 16,
