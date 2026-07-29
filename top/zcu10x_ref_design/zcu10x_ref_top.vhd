@@ -36,11 +36,6 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
---library work;
---use work.gencores_pkg.all;
---use work.wishbone_pkg.all;
---use work.gn4124_core_pkg.all;
---use work.wr_board_pkg.all;
 use work.wr_timecode_pkg.all;
 
 library unisim;
@@ -208,7 +203,7 @@ begin
       pps_led_o => user_led_o(3),
       pps_p_o    => pps_p);
 
-  clk_hpc0_xm105_sma_o <= aux_timing_out.serdes_out when fmc_enable(0) = '1' else 'Z'; -- default 10 MHz
+  clk_hpc0_xm105_sma_o <= aux_timing_out.serdes_out; -- default 10 MHz
   pps_hpc0_xm105_sma_o <= pps_p when fmc_enable(0) = '1' else 'Z';
   clk_hpc1_xm105_sma_o <= clk_sys_62m5 when fmc_enable(1) = '1' else 'Z';
   pps_hpc1_xm105_sma_o <= pps_p when fmc_enable(1) = '1' else 'Z';

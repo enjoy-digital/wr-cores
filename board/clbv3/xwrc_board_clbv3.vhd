@@ -407,7 +407,7 @@ begin  -- architecture struct
   -- The WR PTP core with optional fabric interface attached
   -----------------------------------------------------------------------------
 
-  cmp_board_common : xwrc_board_common
+  cmp_board_common : entity work.xwrc_board_common
     generic map (
       g_simulation                => g_simulation,
       g_with_external_clock_input => g_with_external_clock_input,
