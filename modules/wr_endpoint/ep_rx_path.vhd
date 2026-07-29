@@ -51,6 +51,7 @@ entity ep_rx_path is
     g_with_rtu            : boolean := true;
     g_with_rx_buffer      : boolean := true;
     g_with_early_match    : boolean := false;
+    g_keep_crc            : boolean := false;
     g_rx_buffer_size      : integer := 1024;
     g_use_new_crc         :	boolean := false);
   port (
@@ -286,6 +287,7 @@ begin  -- behavioral
 
   U_crc_size_checker : entity work.ep_rx_crc_size_check
     generic map (
+      g_keep_crc     => g_keep_crc,
       g_use_new_crc	 => g_use_new_crc)
     port map (
       clk_sys_i      => clk_sys_i,
@@ -385,6 +387,9 @@ begin  -- behavioral
   end generate gen_without_rx_buffer;
 
   U_Gen_Status : entity work.ep_rx_status_reg_insert
+    generic map (
+      g_keep_crc => g_keep_crc
+    )
     port map (
       clk_sys_i           => clk_sys_i,
       rst_n_i             => rst_n_sys_i,

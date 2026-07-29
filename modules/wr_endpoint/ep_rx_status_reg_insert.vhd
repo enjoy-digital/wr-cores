@@ -19,11 +19,15 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+use work.gencores_pkg.all;
 use work.endpoint_private_pkg.all;
 use work.endpoint_pkg.all;
 use work.wr_fabric_pkg.all;
 
 entity ep_rx_status_reg_insert is
+  generic (
+    g_keep_crc : boolean := false
+  );
   port (
     clk_sys_i : in std_logic;
     rst_n_i   : in std_logic;
@@ -113,7 +117,7 @@ begin  -- rtl
 
                 sreg.match_class <= mbuf_pclass_i;
                 sreg.is_hp       <= mbuf_is_hp_i;
-                sreg.has_crc     <= '0';
+                sreg.has_crc     <= f_to_std_logic (g_keep_crc);
                 sreg.has_smac    <= '1';
                 sreg.error       <= '0';
             else

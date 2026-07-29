@@ -71,6 +71,7 @@ entity xwr_subsystem is
     g_vuart_fifo_size           : integer                        := 1024;
     g_pcs_16bit                 : boolean                        := false;
     g_records_for_phy           : boolean                        := false;
+    g_keep_crc                  : boolean                        := false;
     g_diag_id                   : integer                        := 0;
     g_diag_ver                  : integer                        := 0;
     g_diag_ro_size              : integer                        := 0;
@@ -810,6 +811,7 @@ begin
       g_tx_runt_padding     => g_tx_runt_padding,
       g_pcs_16bit           => g_pcs_16bit,
       g_rx_buffer_size      => g_ep_rxbuf_size,
+      g_keep_crc            => g_keep_crc,
       g_with_rx_buffer      => true,
       g_with_flow_control   => false,
       g_with_timestamper    => true,

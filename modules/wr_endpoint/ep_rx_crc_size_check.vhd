@@ -33,6 +33,7 @@ use work.ep_crc32_pkg.all;
 entity ep_rx_crc_size_check is
   generic
     (
+      g_keep_crc : boolean := false;
       g_use_new_crc : boolean := false);
   port(
     clk_sys_i : in std_logic;
@@ -74,26 +75,12 @@ architecture behavioral of ep_rx_crc_size_check is
   signal state : t_state;
 
   signal q_purge          : std_logic;
-  signal q_in, q_out      : std_logic_vector(17 downto 0);
+  signal q_dreq_out       : std_logic;
   signal q_bytesel        : std_logic;
   signal q_dvalid_in      : std_logic;
-  signal q_dvalid_out     : std_logic;
-  signal q_dreq_out       : std_logic;
   
-  -- bypass_queue stuff comes here
-  constant c_crc_size    : integer := 2;
-  constant c_dat_width   : integer := 18;
-
-  type t_queue_array is array(0 to c_crc_size-1) of std_logic_vector(c_dat_width-1 downto 0);
-
-  signal q_data           : t_queue_array;
-  signal q_valid          : std_logic_vector(c_crc_size-1 downto 0);
-
-  signal qempty, qfull    : std_logic;
-  signal sreg_enable      : std_logic;
   signal oob_in           : std_logic;
   signal dat_in           : std_logic;
-  signal valid_mask       : std_logic;
   signal err_on_giant     : std_logic;
 
   function f_queue_occupation(q : std_logic_vector; check_empty : std_logic) return std_logic is
@@ -275,73 +262,104 @@ begin  -- behavioral
     end if;
   end process;
 
-  --
-  q_in(15 downto 0)  <= snk_fab_i.data;
-  q_in(17 downto 16) <= snk_fab_i.addr;
-  q_dvalid_in        <= '1' when snk_fab_i.dvalid = '1' and (state = ST_DATA or state = ST_OOB) else '0';
-
-  --  When OOB beat arrives, the FIFO is bypassed.  So the CRC is removed (as the FIFO has the depth of a CRC).
-  --  bytesel (which can only be set on the last data beat) always bypass the FIFO.
-  src_fab_o.dvalid  <= q_dvalid_out;
-  src_fab_o.data    <= q_in(15 downto 0)  when (oob_in = '1') else q_out(15 downto 0);
-  src_fab_o.addr    <= q_in(17 downto 16) when (oob_in = '1') else q_out(17 downto 16);
-  src_fab_o.bytesel <= snk_fab_i.bytesel  when (dat_in = '1') else '0';
-  src_fab_o.eof     <= snk_fab_i.eof;
+  q_dvalid_in  <= '1' when snk_fab_i.dvalid = '1' and (state = ST_DATA or state = ST_OOB) else '0';
+  oob_in       <= '1' when (snk_fab_i.addr = c_WRF_OOB  and q_dvalid_in = '1') else '0';
+  dat_in       <= '1' when (snk_fab_i.addr = c_WRF_DATA and q_dvalid_in = '1') else '0';
 
   src_fab_o.has_rx_timestamp   <= snk_fab_i.has_rx_timestamp;
   src_fab_o.rx_timestamp_valid <= snk_fab_i.rx_timestamp_valid;
 
-  --------------------- the whole of bypass_queue is here ------------------------------------
-  -- it was put inside as the optimization made it far from "universal" and apparently this
-  -- was the cause of doing the bypass_queue a separate module
-  --------------------------------------------------------------------------------------------
-  qempty       <= f_queue_occupation(q_valid, '1') ;
-  qfull        <= f_queue_occupation(q_valid, '0');
-
-  q_dvalid_out <= (qfull and q_dvalid_in) or (oob_in and valid_mask);
-  q_dreq_out   <= (src_dreq_i or not qfull);
-  oob_in       <= '1' when (snk_fab_i.addr = c_WRF_OOB  and q_dvalid_in = '1') else '0';
-  dat_in       <= '1' when (snk_fab_i.addr = c_WRF_DATA and q_dvalid_in = '1') else '0';
-  
-
-  sreg_enable  <= '1' when ((q_dvalid_in = '1') or (qempty = '0' and q_dvalid_out = '1')) else '0';
-  
-  q_out        <= q_data(0);
-
-  p_fifo: process(clk_sys_i)
-  begin
-    if rising_edge(clk_sys_i) then
-      if(sreg_enable = '1') then
-        q_data(c_crc_size-1)  <= q_in;
-        L0: for i in 0 to c_crc_size-2 loop
-            q_data(i)       <= q_data(i+1);
-        end loop L0;        
+  gen_keep_crc: if g_keep_crc generate
+    --  As sof is delayed by one cycle, delay also the whole frame
+    process (clk_sys_i)
+    begin
+      if rising_edge(clk_sys_i) then
+        src_fab_o.dvalid  <= q_dvalid_in;
+        src_fab_o.data    <= snk_fab_i.data;
+        src_fab_o.addr    <= snk_fab_i.addr;
+        src_fab_o.bytesel <= snk_fab_i.bytesel;
+        src_fab_o.eof     <= snk_fab_i.eof;
       end if;
-    end if;
-  end process; 
+    end process;
+    q_dreq_out        <= src_dreq_i;
+  end generate;
 
-  p_queue : process(clk_sys_i)
+  gen_strip_crc: if g_keep_crc = false generate
+    -- bypass_queue stuff comes here
+    constant c_crc_size    : integer := 2;
+    constant c_dat_width   : integer := 18;
+
+    type t_queue_array is array(0 to c_crc_size-1) of std_logic_vector(c_dat_width-1 downto 0);
+
+    signal q_data           : t_queue_array;
+    signal q_valid          : std_logic_vector(c_crc_size-1 downto 0);
+    signal q_in, q_out      : std_logic_vector(17 downto 0);
+    signal q_dvalid_out     : std_logic;
+    signal qempty, qfull    : std_logic;
+    signal valid_mask       : std_logic;
+    signal sreg_enable      : std_logic;
   begin
-    if rising_edge(clk_sys_i) then
-      if rst_n_i = '0' or q_purge = '1' then
-        valid_mask <= '0';
-        q_valid    <= (others => '0');
-      else
+    --
+    q_in(15 downto 0)  <= snk_fab_i.data;
+    q_in(17 downto 16) <= snk_fab_i.addr;
 
-        valid_mask <= src_dreq_i;
+    --  When OOB beat arrives, the FIFO is bypassed.  So the CRC is removed (as the FIFO has the depth of a CRC).
+    --  bytesel (which can only be set on the last data beat) always bypass the FIFO.
+    src_fab_o.dvalid  <= q_dvalid_out;
+    src_fab_o.data    <= q_in(15 downto 0)  when (oob_in = '1') else q_out(15 downto 0);
+    src_fab_o.addr    <= q_in(17 downto 16) when (oob_in = '1') else q_out(17 downto 16);
+    src_fab_o.bytesel <= snk_fab_i.bytesel  when (dat_in = '1') else '0';
+    src_fab_o.eof     <= snk_fab_i.eof;
 
-        if sreg_enable = '1' then
-          q_valid(0) <= q_dvalid_in;
-          if(oob_in = '1' ) then
-            -- Strip CRC
-            q_valid <=(others => '0');
-          else
-            -- Shift
-            q_valid(q_valid'length-1 downto 1) <= q_valid(q_valid'length-2 downto 0);
+    --------------------- the whole of bypass_queue is here ------------------------------------
+    -- it was put inside as the optimization made it far from "universal" and apparently this
+    -- was the cause of doing the bypass_queue a separate module
+    --------------------------------------------------------------------------------------------
+    qempty       <= f_queue_occupation(q_valid, '1') ;
+    qfull        <= f_queue_occupation(q_valid, '0');
+
+    q_dvalid_out <= (qfull and q_dvalid_in) or (oob_in and valid_mask);
+    q_dreq_out   <= (src_dreq_i or not qfull);
+
+    sreg_enable  <= '1' when ((q_dvalid_in = '1') or (qempty = '0' and q_dvalid_out = '1')) else '0';
+
+    q_out        <= q_data(0);
+
+    p_fifo: process(clk_sys_i)
+    begin
+      if rising_edge(clk_sys_i) then
+        if(sreg_enable = '1') then
+          q_data(c_crc_size-1)  <= q_in;
+          L0: for i in 0 to c_crc_size-2 loop
+            q_data(i)       <= q_data(i+1);
+          end loop L0;
+        end if;
+      end if;
+    end process;
+
+    p_queue : process(clk_sys_i)
+    begin
+      if rising_edge(clk_sys_i) then
+        if rst_n_i = '0' or q_purge = '1' then
+          valid_mask <= '0';
+          q_valid    <= (others => '0');
+        else
+
+          valid_mask <= src_dreq_i;
+
+          if sreg_enable = '1' then
+            q_valid(0) <= q_dvalid_in;
+            if(oob_in = '1' ) then
+              -- Strip CRC
+              q_valid <=(others => '0');
+            else
+              -- Shift
+              q_valid(q_valid'length-1 downto 1) <= q_valid(q_valid'length-2 downto 0);
+            end if;
           end if;
         end if;
       end if;
-    end if;
-  end process;
+    end process;
+  end generate;
 
 end behavioral;
