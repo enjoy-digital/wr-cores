@@ -45,6 +45,7 @@ entity xwrc_board_common is
     g_ep_rxbuf_size             : integer                        := 1024;
     g_tx_runt_padding           : boolean                        := TRUE;
     g_dpram_initf               : string                         := "";
+    g_dpram_use_bram_macro      : boolean                        := FALSE;
     g_dpram_size                : integer                        := 131072/4;
     g_interface_mode            : t_wishbone_interface_mode      := PIPELINED;
     g_address_granularity       : t_wishbone_address_granularity := BYTE;
@@ -385,6 +386,7 @@ begin  -- architecture struct
       g_ep_rxbuf_size             => g_ep_rxbuf_size,
       g_tx_runt_padding           => g_tx_runt_padding,
       g_dpram_initf               => f_find_default_lm32_firmware(g_dpram_initf, g_simulation, g_pcs_16bit, FALSE),
+      g_dpram_use_bram_macro      => g_dpram_use_bram_macro,
       g_dpram_size                => g_dpram_size,
       g_interface_mode            => g_interface_mode,
       g_address_granularity       => g_address_granularity,

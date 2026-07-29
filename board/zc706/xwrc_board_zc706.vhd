@@ -1,4 +1,8 @@
 -------------------------------------------------------------------------------
+-- SPDX-FileCopyrightText: 2023 Missing Link Electronics(missinglinkelectronics.com) - CERN (home.cern)
+--
+-- SPDX-License-Identifier: CERN-OHL-W-2.0+
+-------------------------------------------------------------------------------
 -- Title      : WRPC Wrapper for ZC706
 -- Project    : WR PTP Core
 -- URL        : http://www.ohwr.org/projects/wr-cores/wiki/Wrpc_core
@@ -15,10 +19,6 @@
 -- Description: Top-level wrapper for WR PTP core including all the modules
 -- needed to operate the core on the Xilinx ZC706 board.
 -- ZC706: https://www.xilinx.com/products/boards-and-kits/ek-z7-zc706-g.html
--------------------------------------------------------------------------------
--- Copyright (c) 2023-2025 Missing Link Electronics, CERN
--- 
--- CERN Open Hardware Licence Version 2 - Weakly Reciprocal
 -------------------------------------------------------------------------------
 
 library ieee;
@@ -411,7 +411,7 @@ begin  -- architecture struct
   -----------------------------------------------------------------------------
   -- The WR PTP core with optional fabric interface attached
   -----------------------------------------------------------------------------
-  cmp_board_common : xwrc_board_common
+  cmp_board_common : entity work.xwrc_board_common
     generic map (
       g_simulation                => g_simulation,
       g_with_external_clock_input => g_with_external_clock_input,
@@ -423,7 +423,6 @@ begin  -- architecture struct
       g_tx_runt_padding           => TRUE,
       g_dpram_initf               => g_dpram_initf,
       g_dpram_use_bram_macro      => TRUE,
-      g_fpga_family               => "kintex7",
       g_dpram_size                => 262144/4,
       g_interface_mode            => PIPELINED,
       g_address_granularity       => BYTE,
@@ -772,13 +771,12 @@ begin  -- architecture struct
     -----------------------------------------------------------------------------
     -- Platform-dependent part (PHY, PLLs, buffers, etc)
     -----------------------------------------------------------------------------
-    cmp_xwrc_platform : xwrc_platform_xilinx
+    cmp_xwrc_platform : entity work.xwrc_platform_xilinx
       generic map (
         g_fpga_family               => "kintex7",
         g_with_external_clock_input => g_with_external_clock_input,
         g_use_default_plls          => FALSE,
-        g_simulation                => g_simulation,
-        g_dac_bits                  => g_dac_bits)
+        g_simulation                => g_simulation)
       port map (
         areset_n_i            => areset_n_i,
         clk_10m_ext_i         => clk_10m_ext_i,

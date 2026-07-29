@@ -1,4 +1,8 @@
 -------------------------------------------------------------------------------
+-- SPDX-FileCopyrightText: 2023 Missing Link Electronics(missinglinkelectronics.com)
+--
+-- SPDX-License-Identifier: CERN-OHL-W-2.0+
+-------------------------------------------------------------------------------
 -- Title      : WRPC reference design for ZC706 board
 -- Project    : WR PTP Core
 -- URL        : http://www.ohwr.org/projects/wr-cores/wiki/Wrpc_core
@@ -22,10 +26,6 @@
 --
 -- ZC706: https://www.xilinx.com/products/boards-and-kits/ek-z7-zc706-g.html
 --
--------------------------------------------------------------------------------
--- Copyright (c) 2023-2025 Missing Link Electronics
--- 
--- CERN Open Hardware Licence Version 2 - Weakly Reciprocal
 -------------------------------------------------------------------------------
 
 library ieee;

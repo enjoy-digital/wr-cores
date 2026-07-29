@@ -27,6 +27,7 @@ use work.urv_pkg.all;
 entity wrc_urv_wrapper is
   generic(
     g_IRAM_SIZE : integer;
+    g_USE_BRAM_MACROS : boolean := false;
     g_IRAM_INIT : string;
     g_CPU_ID    : integer);
   port(
@@ -163,7 +164,8 @@ begin
       g_ADDR_CONFLICT_RESOLUTION => "dont_care",
       g_INIT_FILE                => g_IRAM_INIT,
       g_FAIL_IF_FILE_NOT_FOUND   => TRUE,
-      g_DUAL_CLOCK               => FALSE)
+      g_DUAL_CLOCK               => FALSE,
+      g_USE_BRAM_MACROS          => g_USE_BRAM_MACROS)
     port map (
       rst_n_i => rst_n_i,
       clka_i  => clk_sys_i,
