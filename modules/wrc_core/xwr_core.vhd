@@ -74,6 +74,7 @@ entity xwr_core is
     g_ep_rxbuf_size            : integer                        := 1024;
     g_tx_runt_padding           : boolean                        := true;
     g_dpram_initf               : string                         := "";
+    g_dpram_use_bram_macro      : boolean                        := false;
     g_dpram_size                : integer                        := 131072/4;  --in 32-bit words
     g_use_platform_specific_dpram        : boolean := FALSE;
     g_interface_mode            : t_wishbone_interface_mode      := PIPELINED;
@@ -470,6 +471,7 @@ begin
   U_CPU: entity work.wrc_urv_wrapper
     generic map (
       g_IRAM_SIZE => g_dpram_size,
+      g_USE_BRAM_MACROS => g_dpram_use_bram_macro,
       g_IRAM_INIT => g_dpram_initf,
       g_CPU_ID => 0
       )
