@@ -14,6 +14,7 @@ modules =  {
         "wr_pps_gen",
         "wr_dacs",
         "wr_si57x_interface",
+        "wr_si549_interface",
         "wr_sit5359_interface",
         "wr_eca",
         "wr_tlu",
