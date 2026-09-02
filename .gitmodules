@@ -6,4 +6,4 @@
 	url = https://gitlab.com/ohwr/project/urv-core.git
 [submodule "ip_cores/wrpc-sw"]
 	path = ip_cores/wrpc-sw
-	url = git@gitlab.com:ohwr/project/wrpc-sw.git
+	url = https://gitlab.com/ohwr/project/wrpc-sw.git
