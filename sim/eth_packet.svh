@@ -34,6 +34,7 @@ class EthPacket;
    
    static const int CMP_OOB                  = 1;
    static const int CMP_STATUS               = 2;
+   static const int CMP_IGNORE_PAYLOAD       = 3;
    
    byte payload[];
    int size;
@@ -167,8 +168,9 @@ class EthPacket;
       if(is_q && (vid != b.vid || pcp != b.pcp))
         return 0;
 
-      if(payload != b.payload)
-        begin
+      if (flags & CMP_IGNORE_PAYLOAD) begin
+      end else begin
+         if(payload != b.payload) return 0;
            $display("notequal: payload");
            return 0;
         end
