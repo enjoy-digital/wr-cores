@@ -18,10 +18,15 @@ include_dirs = [ "../../sim", "gn4124_bfm",
 
 files = [ "main.sv" ]
 
-modules = { "local" :  [ "../..",
-    "../../top/spec_1_1/wr_core_demo",
-    "../../ip_cores/general-cores",
-    "../../ip_cores/gn4124-core",
-    "../../ip_cores/etherbone-core",
-    "gn4124_bfm"] }
-
+modules = { 
+    "local" :  [ "../..",
+        "../../top/spec_1_1/wr_core_demo",
+        "gn4124_bfm",
+    ],
+    "git" : [
+        "https://gitlab.com/ohwr/project/general-cores.git",
+        "https://gitlab.com/ohwr/project/urv-core.git",
+        "https://gitlab.com/ohwr/project/gn4124-core.git@@4eb317d1c226c6fa06baa65d6835bb5d02c3f9a3",
+        "https://gitlab.com/ohwr/project/etherbone-core.git@@035fee323b5bafc8f06de0ac9cabb5892c33134e",
+    ],
+}
