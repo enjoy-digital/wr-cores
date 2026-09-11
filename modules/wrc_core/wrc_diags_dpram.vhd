@@ -42,7 +42,7 @@ entity wrc_diags_dpram is
     clk_sys_i : in std_logic;
     rst_n_i   : in std_logic;
 
-    -- R/O slave (except the 1st, control word)
+    -- R/O slave except CTRL (word 1, byte offset 0x04); VER is word 0.
     slave_user_i : in  t_wishbone_slave_in;
     slave_user_o : out t_wishbone_slave_out;
     -- R/W slave
@@ -84,7 +84,7 @@ begin
       );
 
 
-  s_is_control_word <= '1' when unsigned(slave_user_i.adr(f_log2_size(g_size)+1 downto 2) ) = 0 else '0';
+  s_is_control_word <= '1' when unsigned(slave_user_i.adr(f_log2_size(g_size)+1 downto 2) ) = 1 else '0';
 
   s_we_user <= s_is_control_word and slave_user_i.we and slave_user_i.stb and slave_user_i.cyc;
   s_we_wrc <= slave_wrc_i.we and slave_wrc_i.stb and slave_wrc_i.cyc;
